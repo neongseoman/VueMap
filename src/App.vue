@@ -1,19 +1,18 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <KakaoMap></KakaoMap>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import KakaoMap from './components/kakaoMap';
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
+  components:{
+    KakaoMap
   }
-}
+};
 </script>
 
 <style>
