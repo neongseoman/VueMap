@@ -2,7 +2,7 @@
   <div>
     <div id="map" class="map"></div>
     <input type="text" id="keyword" v-model="keyword">
-    <button v-on:click="searching">검색</button>
+    <button v-on:click="searchPlaces(keyword)">검색</button>
   </div>
 </template>
 
@@ -13,7 +13,8 @@ export default {
     return {
       map : null,
       keyword: '',
-      infowindow : null
+      infowindow : null,
+      markers: []
     }
   },
 
@@ -39,46 +40,50 @@ export default {
     },
 
     //keyword로 장소 검색하기
-    searching(){
+    searchPlaces(keyword){
       var ps = new kakao.maps.services.Places();
-      ps.keywordSearch(this.keyword,this.placeSearchCB)
+      ps.keywordSearch(keyword,this.placeSearchCB);
     },
 
     // eslint-disable-next-line no-unused-vars
-    placeSearchCB(data, status,pagination){
-      if(status === kakao.maps.services.Status.OK){
-      //  display place and marker
+    placeSearchCB(data, status,pagination) {
+      if (status === kakao.maps.services.Status.OK) {
+        //  display place and marker
 
         var bounds = new kakao.maps.LatLngBounds();
-        console.log(bounds)
-        for (let i = 0; i< data.length;i++){
+        for (let i = 0; i < data.length; i++) {
           this.displayMarker(data[i]);
-          bounds.extend(new kakao.maps.LatLng(data[i].y,data[i].x))
+          bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x))
         }
-
-      }else if(status === kakao.maps.services.Status.ZERO_RESULT){
+      } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
         alert("검색결과가 없습니다.")
-      }else if(status === kakao.maps.services.Status.ERROR){
+      } else if (status === kakao.maps.services.Status.ERROR) {
         alert('검색 중 오류가 발생했습니다.')
       }
-
-      this.map.setBounds(bounds);
+      this.displayPlaces(data)
+      this.displayPagination(pagination)
     },
 
     displayMarker(place){
-      var marker = new kakao.maps.Marker({
+      const marker = new kakao.maps.Marker({
         map: this.map,
         position: new kakao.maps.LatLng(place.y,place.x)
       });
 
       kakao.maps.event.addListener(marker, 'click', function() {
+        alert('test')
         // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
         this.infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
         this.infowindow.open(this.map, marker);
       });
+    },
+    displayPlaces(place){
+
+    },
+    displayPagination(pagination){
+
     }
   }
-
 }
 </script>
 
@@ -86,5 +91,8 @@ export default {
 .map{
   width:100%;
   height:350px;
+}
+button {
+  margin: 0 3px;
 }
 </style>
