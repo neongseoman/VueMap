@@ -52,7 +52,7 @@ export default {
 
         var bounds = new kakao.maps.LatLngBounds();
         for (let i = 0; i < data.length; i++) {
-          this.displayMarker(data[i]);
+          // this.displayMarker(data[i]);
           bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x))
         }
       } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
@@ -60,29 +60,48 @@ export default {
       } else if (status === kakao.maps.services.Status.ERROR) {
         alert('검색 중 오류가 발생했습니다.')
       }
-      this.displayPlaces(data)
-      this.displayPagination(pagination)
+      this.map.setBounds(bounds)
+      this.displayMarkers(data)
+      // this.displayPagination(pagination)
     },
 
-    displayMarker(place){
-      const marker = new kakao.maps.Marker({
-        map: this.map,
-        position: new kakao.maps.LatLng(place.y,place.x)
-      });
+    // displayMarker(place){
+    //   const marker = new kakao.maps.Marker({
+    //     map: this.map,
+    //     position: new kakao.maps.LatLng(place.y,place.x)
+    //   });
+    //
+    //   kakao.maps.event.addListener(marker, 'click', function() {
+    //     alert('test')
+    //     // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
+    //     this.infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
+    //     this.infowindow.open(this.map, marker);
+    //   });
+    // },
+    displayMarkers(place){
+      console.log("displaymarkers")
+      // 기존에 존재하는 마커가 존재하면 다 제거
+      if(this.markers.length>0){
+        // for(let i = 0;i<this.markers.length;i++){
+        //   this.markers[i].setMap(null)
+        // }
+        this.markers =[]
+      }
 
-      kakao.maps.event.addListener(marker, 'click', function() {
-        alert('test')
-        // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
-        this.infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
-        this.infowindow.open(this.map, marker);
-      });
+      for(let i = 0;i <place.length;i++){
+        var marker = new kakao.maps.Marker({
+          map:this.map,
+          posion: new kakao.maps.LatLng(place[i].y,place[i].x)
+        })
+        marker.setMap(this.map)
+        this.markers.push(marker)
+      }
+      console.log(this.markers)
     },
-    displayPlaces(place){
 
-    },
-    displayPagination(pagination){
-
-    }
+    // displayPagination(pagination){
+    //
+    // }
   }
 }
 </script>
