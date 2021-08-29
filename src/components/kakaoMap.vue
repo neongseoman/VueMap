@@ -73,6 +73,7 @@ export default {
           position:new kakao.maps.LatLng(place[i].y,place[i].x)
         }) 
         marker.setMap(this.map)
+
       }
 
     }
