@@ -14,7 +14,8 @@ export default {
       map : null,
       keyword: '',
       infowindow : null,
-      markers: []
+      markers: [],
+      markerPositions:[]
     }
   },
 
@@ -45,7 +46,7 @@ export default {
       ps.keywordSearch(keyword,this.placeSearchCB);
     },
 
-    // eslint-disable-next-line no-unused-vars
+    //   eslint-disable-next-line no-unused-vars
     placeSearchCB(data, status,pagination) {
       if (status === kakao.maps.services.Status.OK) {
         //  display place and marker
@@ -61,49 +62,23 @@ export default {
         alert('검색 중 오류가 발생했습니다.')
       }
       this.map.setBounds(bounds)
-      this.displayMarkers(data)
-      // this.displayPagination(pagination)
+
+      this.displayMarker(data)
     },
-
-    // displayMarker(place){
-    //   const marker = new kakao.maps.Marker({
-    //     map: this.map,
-    //     position: new kakao.maps.LatLng(place.y,place.x)
-    //   });
-    //
-    //   kakao.maps.event.addListener(marker, 'click', function() {
-    //     alert('test')
-    //     // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
-    //     this.infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
-    //     this.infowindow.open(this.map, marker);
-    //   });
-    // },
-    displayMarkers(place){
-      console.log("displaymarkers")
-      // 기존에 존재하는 마커가 존재하면 다 제거
-      if(this.markers.length>0){
-        // for(let i = 0;i<this.markers.length;i++){
-        //   this.markers[i].setMap(null)
-        // }
-        this.markers =[]
-      }
-
-      for(let i = 0;i <place.length;i++){
+    displayMarker(place){
+      for(let i =0;i<place.length;i++){
+        // this.markers.push([data[i].y,data[i].x])
         var marker = new kakao.maps.Marker({
           map:this.map,
-          posion: new kakao.maps.LatLng(place[i].y,place[i].x)
-        })
+          position:new kakao.maps.LatLng(place[i].y,place[i].x)
+        }) 
         marker.setMap(this.map)
-        this.markers.push(marker)
       }
-      console.log(this.markers)
-    },
 
-    // displayPagination(pagination){
-    //
-    // }
+    }
   }
 }
+
 </script>
 
 <style scoped>
