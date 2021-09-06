@@ -1,12 +1,16 @@
 <template>
-  <div>
+  <div id="map_wrap">
     <div id="map" class="map" style="position:relative;overflow:hidden;"></div>
       <div id="menu_wrap">
         <input type="text" id="keyword" v-model="keyword">
         <button v-on:click="searching">검색</button>
+        <ul id="menu" style="margin-left: -1px;float: left;padding: 12px 9px;list-style: none;font-size:20px;line-height: 1.5;">
+          <li id="search.tab1">검색</li>
+          <li id="search.tab2">내가 고른..</li>
+        </ul>
+        <ul id="placesList" style="margin-left: -1px;float: left;padding: 12px 9px;list-style: none;"></ul>
+        <div id="pagination"></div>
       </div>
-    <ul id="placesList"></ul>
-    <div id="pagination"></div>
   </div>
 </template>
 
@@ -48,17 +52,10 @@ export default {
       ps.keywordSearch(this.keyword,this.placeSearchCB)
     },
 
-    // eslint-disable-next-line no-unused-vars
     placeSearchCB(data, status,pagination){
       if(status === kakao.maps.services.Status.OK){
       //  display place and marker
-
-        var bounds = new kakao.maps.LatLngBounds();
-
-        for (let i = 0; i< data.length;i++){
-          this.displayMarker(data[i]);
-          bounds.extend(new kakao.maps.LatLng(data[i].y,data[i].x))
-        }
+        this.displayPlaces(data)
         this.displayPagination(pagination);
 
       }else if(status === kakao.maps.services.Status.ZERO_RESULT){
@@ -66,62 +63,111 @@ export default {
       }else if(status === kakao.maps.services.Status.ERROR){
         alert('검색 중 오류가 발생했습니다.')
       }
+    },
 
+    displayPlaces(data){
+      var listEl = document.getElementById("placesList"),
+          menuEl = document.getElementById('menu_wrap'),
+          fragment = document.createDocumentFragment(),
+          bounds = new kakao.maps.LatLngBounds();
+
+      this.removeAllChildNode(listEl);
+
+      for (let i = 0; i< data.length;i++){
+        var itemEl = this.getListItem(i,data[i]);
+        this.displayMarker(data[i],i);
+        bounds.extend(new kakao.maps.LatLng(data[i].y,data[i].x));
+
+        fragment.appendChild(itemEl);
+      }
+
+      listEl.appendChild(fragment);
+      menuEl.scrollTop = 0;
       this.map.setBounds(bounds);
     },
 
+    getListItem(index, places){
+      const el = document.createElement('id');
+      let itemStr = '';
+
+      itemStr = '<span class="markerbg marker_' + (index+1) + '"></span>' +
+          '<div class="info">' +
+          '   <h5>' + places.place_name + '</h5>';
+
+      if (places.road_address_name) {
+        itemStr += '    <span>' + places.road_address_name + '</span>' +
+            '   <span class="jibun gray">' +  places.address_name  + '</span>';
+      } else {
+        itemStr += '    <span>' +  places.address_name  + '</span>';
+      }
+
+      itemStr += '  <span class="tel">' + places.phone  + '</span>' +
+          '</div>';
+
+      el.innerHTML = itemStr;
+      el.className = 'item';
+
+      return el;
+    },
+
     displayMarker(place){
-
-
       // var let 으로 하면 인포윈도우 안됨
+      const position = new kakao.maps.LatLng(place.y,place.x)
       const marker = new kakao.maps.Marker({
         map: this.map,
-        position: new kakao.maps.LatLng(place.y,place.x)
+        position
       });
-
-      const content = '<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>'
-      let infowindow = new kakao.maps.InfoWindow({
-        // map: this.map,
-        // position: kakaoposition,
-        removable:true,
-        content
-      });
-      // infowindow.open(this.map, marker);
-      // console.log(place.place_name)
 
       kakao.maps.event.addListener(marker, 'click', () => {
-        infowindow.open(this.map,marker);
+          this.displayOverlay(marker,place,position)
+          this.map.panTo(position)
       });
 
-      // kakao.maps.event.addListener(marker,'',function (){
-      //   infowindow.close();
-      // })
     },
-    displayPagination(){
 
-    }
+    displayPagination(){
+    },
+    displayOverlay(marker,place,position){
+      const content = '<div id="overlay", style="width:360px;height:350px;padding:15px 10px;">' + place.place_name + '</div>' +
+          '<button type="button">닫기</button>'
+      let overlay= new kakao.maps.CustomOverlay({
+        position,
+        content
+      });
+      overlay.setMap(this.map)
+    },
+    removeAllChildNode(el){
+      // console.log(el)
+      while (el.hasChildNodes()){
+        el.removeChild(el.lastChild)
+      }
+    },
+
   }
+
 }
 </script>
 
 <style scoped>
+body{font: 12px/1.5 'Malgun Gothic','돋움',dotum,sans-serif;}
 .map{
   width:100%;
-  height:350px;
+  height:700px;
 }
 .map_wrap, .map_wrap * {margin:0;padding:0;font-family:'Malgun Gothic',dotum,'돋움',sans-serif;font-size:12px;}
 .map_wrap a, .map_wrap a:hover, .map_wrap a:active{color:#000;text-decoration: none;}
 .map_wrap {position:relative;width:100%;height:500px;}
+.overlay {position:relative;border-color: black;background-color: aqua}
 #menu_wrap {position:absolute;top:0;left:0;bottom:0;width:250px;margin:10px 0 30px 10px;padding:5px;overflow-y:auto;background:rgba(255, 255, 255, 0.7);z-index: 1;font-size:12px;border-radius: 10px;}
 .bg_white {background:#fff;}
 #menu_wrap hr {display: block; height: 1px;border: 0; border-top: 2px solid #5F5F5F;margin:3px 0;}
 #menu_wrap .option{text-align: center;}
 #menu_wrap .option p {margin:10px 0;}
 #menu_wrap .option button {margin-left:5px;}
-#placesList li {list-style: none;}
+#placesList li {list-style: none; }
 #placesList .item {position:relative;border-bottom:1px solid #888;overflow: hidden;cursor: pointer;min-height: 65px;}
 #placesList .item span {display: block;margin-top:4px;}
-#placesList .item h5, #placesList .item .info {text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
+#placesList .item h5, #placesList .item .info {text-overflow: ellipsis;overflow: hidden;white-space: nowrap}
 #placesList .item .info{padding:10px 0 10px 55px;}
 #placesList .info .gray {color:#8a8a8a;}
 #placesList .info .jibun {padding-left:26px;background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;}
