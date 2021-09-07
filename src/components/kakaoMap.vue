@@ -4,9 +4,12 @@
       <div id="menu_wrap">
         <input type="text" id="keyword" v-model="keyword">
         <button v-on:click="searching">검색</button>
-        <ul id="menu" style="margin-left: -1px;float: left;padding: 12px 9px;list-style: none;font-size:20px;line-height: 1.5;">
-          <li id="search.tab1">검색</li>
-          <li id="search.tab2">내가 고른..</li>
+        <ul id="menu" style="margin-left: -1px;float: left;padding: 12px 9px;list-style: none;font-size:20px;line-height: 1.5;position: absolute">
+          <li id="search.tab1">
+            <a href="#"></a>
+            검색</li>
+          <li id="search.tab2">
+            <a href="#"></a>내가 고른..</li>
         </ul>
         <ul id="placesList" style="margin-left: -1px;float: left;padding: 12px 9px;list-style: none;"></ul>
         <div id="pagination"></div>
@@ -119,23 +122,30 @@ export default {
       });
 
       kakao.maps.event.addListener(marker, 'click', () => {
-          this.displayOverlay(marker,place,position)
+          this.displayInfoWindow(marker,place,position)
           this.map.panTo(position)
       });
 
     },
 
     displayPagination(){
+
     },
-    displayOverlay(marker,place,position){
-      const content = '<div id="overlay", style="width:360px;height:350px;padding:15px 10px;">' + place.place_name + '</div>' +
-          '<button type="button">닫기</button>'
-      let overlay= new kakao.maps.CustomOverlay({
+
+    displayInfoWindow(marker,place,position){
+      const content = '<div id="infowindow", style="width:180px;height:200px;padding:15px 10px;">' +
+          '<span id="placeinfo">'+place.place_name +
+          '<p>'+place.phone+'</p>' + '<p>' + place.address_name + '</p>'+'</span>'+
+          '<button type="button">닫기</button>'+'</div>'
+
+      let infowindow= new kakao.maps.InfoWindow({
         position,
-        content
+        content,
+        removable:true
       });
-      overlay.setMap(this.map)
+      infowindow.setMap(this.map)
     },
+
     removeAllChildNode(el){
       // console.log(el)
       while (el.hasChildNodes()){
