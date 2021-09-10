@@ -2,14 +2,15 @@
   <div id="app">
     <div id="map_wrap">
       <div id="map">
-        <search id="search_wrap" style="float: left"></search>
+        <search-destination id="search_wrap" style="float: left;width: 300px"
+        v-on:placeDataPass="addMarker(data)"></search-destination>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import search from "@/components/search.vue";
+import searchDestination from "@/components/searchDestination.vue";
 
 export default {
   name: 'App',
@@ -40,9 +41,13 @@ export default {
       document.head.appendChild(script);
     },
 
+    addMarker(data){
+      console.log(data)
+
+    }
   },
   components:{
-    search
+    searchDestination
   }
 };
 </script>

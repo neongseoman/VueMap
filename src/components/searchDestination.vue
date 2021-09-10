@@ -3,7 +3,7 @@
     <input type="text" v-model="keyword" id="keyword">
     <button v-on:click="searching" >검색</button>
     <choiceList></choiceList>
-    <placeList></placeList>
+    <placeList v-bind:data="placedata"></placeList>
   </div>
 </template>
 
@@ -11,7 +11,7 @@
 import choiceList from "@/components/search/choiceList.vue"
 import placeList from "@/components/search/placeList.vue";
 export default {
-  name: "search",
+  name: "searchDestination",
   data() {
     return {
       keyword: '',
@@ -28,6 +28,7 @@ export default {
     placeSearchCB(data, status, pagination) {
       if(status === kakao.maps.services.Status.OK){
         this.placedata = data
+        this.$emit('placeDataPass',data)
       }else if(status === kakao.maps.services.Status.ZERO_RESULT){
         alert("검색결과가 없습니다.")
       }else if(status === kakao.maps.services.Status.ERROR){

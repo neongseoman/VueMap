@@ -1,13 +1,29 @@
 <template>
-  <div></div>
+  <div>
+{{data[0].place_name}},{{data[1].place_name}},{{data[2].place_name}}
+  </div>
 </template>
 
 <script>
 export default {
   name: "placeList",
-  props:['data']
+  props:['data'],
+  methods:{
+    makePlaceList(){
+      // var listEl = document.getElementById('placesList')
+    //       menuEl = document.getElementById(),
+    //       fragment = document.createDocumentFragment()
+    //
+    //   this.removeAllChildNode()
+    // },
+    // removeAllChildNode(el) {
+    //
+    }
+
+  }
 }
 </script>
+
 
 <style scoped>
 #placesList li {list-style: none; }
