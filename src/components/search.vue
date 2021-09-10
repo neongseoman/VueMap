@@ -1,7 +1,7 @@
 <template>
   <div>
     <input type="text" v-model="keyword" id="keyword">
-    <button v-on:click="searching" @keyup.enter="searching">검색</button>
+    <button v-on:click="searching" >검색</button>
     <choiceList></choiceList>
     <placeList></placeList>
   </div>
