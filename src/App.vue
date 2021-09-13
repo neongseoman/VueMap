@@ -3,7 +3,7 @@
     <div id="map_wrap">
       <div id="map">
         <search-destination id="search_wrap" style="float: left;width: 300px"
-        v-on:placeDataPass="addMarker(data)"></search-destination>
+        v-on:placeDataPass="addMarker"></search-destination>
       </div>
     </div>
   </div>
@@ -42,7 +42,24 @@ export default {
     },
 
     addMarker(data){
-      console.log(data)
+      let bounds = new kakao.maps.LatLngBounds();
+      for(let i =0 ;i < data.length;i++){
+        this.displayMarker(data[i]);
+        bounds.extend(new kakao.maps.LatLng(data[i].y,data[i].x));
+      }
+      this.map.setBounds(bounds)
+    },
+    displayMarker(place) {
+      const position = new kakao.maps.LatLng(place.y, place.x)
+      const marker = new kakao.maps.Marker({
+        map:this.map,
+        position
+      });
+
+      kakao.maps.event.addListener(marker, 'click', () => {
+        // this.displayInfoWindow(marker,place,position)
+        this.map.panTo(position)
+      });
 
     }
   },
