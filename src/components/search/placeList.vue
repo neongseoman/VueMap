@@ -62,6 +62,13 @@ export default {
     placedata:function (){
       this.makePlaceList()
     }
+  },
+  computed:{
+    renewdata(){
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      return this.placedata = this.data
+    }
+
   }
 
 }
