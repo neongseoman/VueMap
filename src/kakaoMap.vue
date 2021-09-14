@@ -152,7 +152,6 @@ export default {
         el.removeChild(el.lastChild)
       }
     },
-
   }
 
 }

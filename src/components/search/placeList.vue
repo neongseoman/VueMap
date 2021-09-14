@@ -10,24 +10,27 @@ export default {
   props:['data'],
   data(){
     return{
-      placedata:this.data
+      placedata : this.data
     }
   },
   methods:{
     makePlaceList(){
+      // console.log("makelist")
       var listEl = document.getElementById('placesList'),
           menuEl = document.getElementById('menu_wrap'),
           fragment = document.createDocumentFragment()
 
-      for (let i = 0;i <this.placedata.length;i++) {
-        let itemEl = this.getListItem(i,this.placedata[i])
+      this.removeAllChildNode(listEl)
+
+      for (let i = 0;i <this.data.length;i++) {
+        let itemEl = this.getListItem(i,this.data[i])
 
         fragment.appendChild(itemEl)
       }
       listEl.appendChild(fragment);
-
-      this.removeAllChildNode(menuEl)
+      menuEl.scrollTop = 0;
     },
+
     removeAllChildNode(el) {
       while (el.hasChildNodes()){
         el.removeChild(el.lastChild)
@@ -56,21 +59,12 @@ export default {
 
       return el;
     }
-
   },
   watch:{
-    placedata:function (){
+    data:function (){
       this.makePlaceList()
     }
-  },
-  computed:{
-    renewdata(){
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      return this.placedata = this.data
-    }
-
   }
-
 }
 </script>
 

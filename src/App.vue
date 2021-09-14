@@ -17,7 +17,9 @@ export default {
   data() {
     return {
       map:null,
-      keyword: ''
+      keyword: '',
+      markers: [],
+      infowWindows: []
     }
   },
 
@@ -47,6 +49,7 @@ export default {
         this.displayMarker(data[i]);
         bounds.extend(new kakao.maps.LatLng(data[i].y,data[i].x));
       }
+
       this.map.setBounds(bounds)
     },
     displayMarker(place) {
@@ -55,14 +58,49 @@ export default {
         map:this.map,
         position
       });
+      this.markers.push(marker)
 
       kakao.maps.event.addListener(marker, 'click', () => {
         // this.displayInfoWindow(marker,place,position)
+        this.infowWindows.push(this.displayInfoWindow(marker,place,position))
         this.map.panTo(position)
       });
+    },
+    // removeMarkers(){
+    //   console.log("removeMarkers")
+    //   for(let i = 0; i < this.markers.length;i++){
+    //     this.markers[i].setMarkers(null)
+    //   }
+    //   this.markers = []
+    // },
+    // markersVaildCheck(){
+    //   if (this.markers.length){
+    //     this.removeMarkers()
+    //   }
+    //   else {
+    //     return 0
+    //   }
+    // },
 
+    displayInfoWindow(marker, place, position) {
+      let infoWindow = new kakao.maps.InfoWindow({
+        position,
+        removable:true
+      });
+      const content = '<div id="infowindow", style="width:180px;height:200px;padding:15px 10px;">' +
+          '<span id="placeinfo">'+place.place_name +
+          '<p>'+place.phone+'</p>' + '<p>' + place.address_name + '</p>'+'</span>'+
+          '<button type="button" onclick="closeInfoWindow()">닫기</button>'+'</div>'
+      infoWindow.setContent(content)
+      infoWindow.setMap(this.map)
+      return infoWindow
+    },
+
+    closeInfoWindow(infoWindow){
+      infoWindow.setMap(null)
     }
   },
+
   components:{
     searchDestination
   }
