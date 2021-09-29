@@ -66,21 +66,6 @@ export default {
         this.map.panTo(position)
       });
     },
-    // removeMarkers(){
-    //   console.log("removeMarkers")
-    //   for(let i = 0; i < this.markers.length;i++){
-    //     this.markers[i].setMarkers(null)
-    //   }
-    //   this.markers = []
-    // },
-    // markersVaildCheck(){
-    //   if (this.markers.length){
-    //     this.removeMarkers()
-    //   }
-    //   else {
-    //     return 0
-    //   }
-    // },
 
     displayInfoWindow(marker, place, position) {
       let infoWindow = new kakao.maps.InfoWindow({
